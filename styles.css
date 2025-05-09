@@ -84,7 +84,7 @@ section {
     justify-content: center;
     align-items: center;
     text-align: center;
-transition: background 0.5s ease-in-out; /* Smooth transition for background changes */
+    transition: background 0.5s ease-in-out; /* Smooth transition for background changes */
 }
 
 section.visible {
@@ -110,8 +110,9 @@ section.visible {
     box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.5);
 }
 
+/* About Section Background */
 #about {
-    background: linear-gradient(135deg, #1e1e1e, #2a2a2a); /* Rich dark gradient */
+    background: linear-gradient(135deg, #1e1e1e, #2a2a2a); /* Initial dark gradient */
     color: #e0e0e0; /* Soft white text */
     padding: 50px 20px;
     text-align: center;
@@ -169,7 +170,7 @@ section.visible {
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); /* Soft shadow for depth */
 }
 
-/* Projects Section */
+/* Projects Section Background */
 #projects {
     background: linear-gradient(135deg, #2a2a2a, #3a3a3a); /* Slightly lighter gradient */
     color: #dcdcdc; /* Softer white */
@@ -247,7 +248,7 @@ section.visible {
     color: #d4af37; /* Gold color for the icon */
 }
 
-/* Contact Section */
+/* Contact Section Background */
 #contact {
     background: linear-gradient(135deg, #3a3a3a, #4a4a4a); /* Even lighter gradient */
     color: #f0f0f0; /* Light text */
@@ -382,9 +383,6 @@ footer {
     width: 300px;
     height: 300px;
     border-radius: 50%;
-    border: 5px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    margin-bottom: 20px;
     background-image: url('images/headshot.jpg');
     background-size: cover;
     background-position: center;

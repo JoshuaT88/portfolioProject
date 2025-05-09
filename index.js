@@ -86,3 +86,32 @@ document.addEventListener('scroll', function onScroll() {
         document.removeEventListener('scroll', onScroll);
     }
 });
+
+document.addEventListener("scroll", () => {
+    const aboutSection = document.querySelector("#about");
+    const projectsSection = document.querySelector("#projects");
+    const contactSection = document.querySelector("#contact");
+
+    const scrollPosition = window.scrollY + window.innerHeight / 2;
+
+    // Change background for About section
+    if (scrollPosition >= aboutSection.offsetTop && scrollPosition < projectsSection.offsetTop) {
+        aboutSection.style.background = "linear-gradient(135deg, #1c1c1c, #292929)";
+    } else {
+        aboutSection.style.background = "linear-gradient(135deg, #1e1e1e, #2a2a2a)";
+    }
+
+    // Change background for Projects section
+    if (scrollPosition >= projectsSection.offsetTop && scrollPosition < contactSection.offsetTop) {
+        projectsSection.style.background = "linear-gradient(135deg, #262626, #343434)";
+    } else {
+        projectsSection.style.background = "linear-gradient(135deg, #2a2a2a, #3a3a3a)";
+    }
+
+    // Change background for Contact section
+    if (scrollPosition >= contactSection.offsetTop) {
+        contactSection.style.background = "linear-gradient(135deg, #333333, #444444)";
+    } else {
+        contactSection.style.background = "linear-gradient(135deg, #3a3a3a, #4a4a4a)";
+    }
+});
