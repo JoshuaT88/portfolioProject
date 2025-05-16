@@ -3,88 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio</title>
+    <title>Joshua Tiller | Portfolio</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 
+    <!-- Social Bar -->
+    <div class="social-bar">
+        <a href="https://www.linkedin.com/in/joshuatillercreates8823" target="_blank" aria-label="LinkedIn">
+            <i class="fab fa-linkedin"></i>
+        </a>
+        <a href="https://github.com/JoshuaT88" target="_blank" aria-label="GitHub">
+            <i class="fab fa-github"></i>
+        </a>
+    </div>
+
+    <!-- Navigation -->
     <nav>
         <ul>
-            <li><a href="#hero">Home</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#projects">Projects</a></li>
             <li><a href="#contact">Contact</a></li>
+            <li><a href="images/Resume.pdf" target="_blank"><i class="fas fa-file-alt"></i> Resume</a></li>
         </ul>
     </nav>
 
+    <!-- Hero Section -->
     <section id="hero">
         <div class="hero-content">
             <img src="images/headshot.jpg" alt="Profile Image" class="profile-image">
-            <h1>Hi, I'm Joshua Tiller</h1>
-            <p class="subtext">I am a Jr. Web/Software Developer</p>
+            <h1>Joshua Tiller</h1>
+            <p class="subtext">Jr. Web/Software Developer</p>
+            
         </div>
-        <div class="scroll-down">
-            <p>Click to explore</p>
-            <div class="arrow"></div>
-        </div>
+        <div class="hero-fade"></div>
     </section>
 
-    <section id="about">
-        <h2>About Me</h2>
-        <div class="typewriter">
-            <p class="first_line">Welcome in! I am a web developer with a passion for creating beautiful and functional websites and user-friendly applications.</p>
-            <p class="second_line">My journey in web development started in 2022, and since then, I have honed my skills in HTML, CSS, JavaScript, and various frameworks and backend knowledge with an end goal of being a full stack developer.</p>
-            <p class="third_line">In my free time, I enjoy learning new technologies and working on personal projects that challenge my skills.</p>
-            <p class="fourth_line">Feel free to explore my history and please reach out if you have any questions, concerns, or opportunities!</p>
-        </div>
-    </section>
+    <!-- Main Content -->
+    <main class="main-content" id="main-content">
+        <section class="card-section" id="about">
+            <h2>About Me</h2>
+            <p>
+                Hi, I’m Josh, a 24-year-old self-taught software developer based in Knoxville, TN. I specialize in building clean, functional, and efficient web applications, with a strong focus on JavaScript and modern frontend development.
 
-    <section id="projects">
-        <h2>Projects</h2>
-        <ul>
-            <li>
-                <a href="https://www.customcutmetalscorp.com" target="_blank" aria-label="Visit Custom Cut Metals Corp">
-                    <i class="fas fa-globe"></i> Custom Cut Metals Corp
-                </a>
-            </li>
-            <li>
-                <a href="#" aria-label="View Project 2">
-                    Project 2
-                </a>
-            </li>
-            <li>
-                <a href="#" aria-label="View Project 3">
-                    Project 3
-                </a>
-            </li>
-        </ul>
-    </section>
+My approach is simple: solve real problems with clean code and thoughtful design. I’ve built this portfolio and the tools inside it from scratch — not just to showcase my skills, but to deepen them. Every feature, function, and line of code here exists because I asked, “What would make this more useful or meaningful?”
 
-    <section id="contact">
-        <h2>Contact Me</h2>
-        <p>If you would like to get in touch, feel free to reach out via email. You may also connect with me on LinkedIn or github.</p>
-        <ul>
-            <li>
-                <a href="mailto:jatiller88@gmail.com">
-                    <i class="fas fa-envelope"></i> jatiller88@gmail.com
-                </a>
-            </li>
-            <li>
-                <a href="https://www.linkedin.com/in/joshuatillercreates8823" target="_blank">
-                    <i class="fab fa-linkedin"></i> Joshua Tiller
-                </a>
-            </li>
-            <li>
-                <a href="https://github.com/JoshuaT88" target="_blank">
-                    <i class="fab fa-github"></i> JoshuaT88
-                </a>
-            </li>
-        </ul>
-    </section>
+I may not have a degree or job title yet, but I’ve put in the work — learning by building, debugging, and iterating daily. I’m actively looking for my first role where I can contribute, grow fast, and make a real impact alongside a team that values curiosity, clarity, and care for the craft.
+            </p>
+        </section>
+
+        <section class="card-section" id="projects">
+            <h2>Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <a href="https://www.customcutmetalscorp.com" target="_blank">
+                        <i class="fas fa-globe"></i>
+                        <span>Custom Cut Metals Corp</span>
+                    </a>
+                    <span class="tech">HTML, CSS, JS</span>
+                </div>
+                <div class="project-card">
+                    <a href="dev-toolbox/index.html" target="_blank">
+                        <i class="fas fa-toolbox"></i>
+                        <span>Dev Toolbox</span>
+                    </a>
+                    <span class="tech">HTML, CSS, JS</span>
+                </div>
+                <div class="project-card">
+                    <a href="#" target="_blank">
+                        <i class="fas fa-code"></i>
+                        <span>Project Three</span>
+                    </a>
+                    <span class="tech">React, Node.js</span>
+                </div>
+                <div class="project-card">
+                    <a href="#" target="_blank">
+                        <i class="fas fa-database"></i>
+                        <span>Project Four</span>
+                    </a>
+                    <span class="tech">Python, SQL</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="card-section" id="contact">
+            <h2>Contact</h2>
+            <ul>
+                <li>
+                    <a href="mailto:jatiller88@gmail.com">
+                        <i class="fas fa-envelope"></i> jatiller88@gmail.com
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.linkedin.com/in/joshuatillercreates8823" target="_blank">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com/JoshuaT88" target="_blank">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                </li>
+            </ul>
+        </section>
+    </main>
 
     <footer>
-        <p>&copy; 2025 Joshua Tiller. All rights reserved.</p>
+        &copy; 2025 Joshua Tiller. All rights reserved.
     </footer>
 
     <script src="index.js"></script>
