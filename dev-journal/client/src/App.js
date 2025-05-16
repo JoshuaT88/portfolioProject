@@ -10,7 +10,7 @@ function App() {
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/posts')
+    axios.get('https://portfolioproject-5jlv.onrender.com')
       .then(res => {
         setPosts(res.data);
         setLoading(false);
