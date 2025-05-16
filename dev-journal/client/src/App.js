@@ -10,7 +10,7 @@ function App() {
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    axios.get('https://portfolioproject-5jlv.onrender.com')
+    axios.get('https://portfolioproject-5jlv.onrender.com/api/posts')
       .then(res => {
         setPosts(res.data);
         setLoading(false);
@@ -34,7 +34,7 @@ function App() {
     }
 
     try {
-      const res = await axios.post('http://localhost:5000/api/posts', form);
+      const res = await axios.post('https://portfolioproject-5jlv.onrender.com/api/posts', form);
       setPosts([res.data, ...posts]);
       setForm({ title: '', body: '' });
       showToast('Post added!', 'success');
@@ -49,7 +49,7 @@ function App() {
     if (!confirm) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/posts/${id}`);
+      await axios.delete(`https://portfolioproject-5jlv.onrender.com/api/posts/${id}`);
       setPosts(posts.filter(post => post._id !== id));
       showToast('Post deleted', 'success');
     } catch (err) {
@@ -60,7 +60,7 @@ function App() {
 
   const handleUpdate = async (id) => {
     try {
-      const res = await axios.put(`http://localhost:5000/api/posts/${id}`, editForm);
+      const res = await axios.put(`https://portfolioproject-5jlv.onrender.com/api/posts/${id}`, editForm);
       setPosts(posts.map(post => (post._id === id ? res.data : post)));
       setEditingPostId(null);
       setEditForm({ title: '', body: '' });
