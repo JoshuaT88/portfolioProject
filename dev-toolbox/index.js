@@ -1,3 +1,7 @@
+window.onbeforeunload = function () {
+  window.scrollTo(0, 0);
+};
+
 document.getElementById('format-json').addEventListener('click', () => {
     const input = document.getElementById('json-input').value;
     const outputElement = document.getElementById('json-output');
@@ -6,9 +10,11 @@ document.getElementById('format-json').addEventListener('click', () => {
         const pasrsed = JSON.parse(input);
         const formatted = JSON.stringify(pasrsed, null, 2);
         outputElement.textContent = formatted;
+        outputElement.classList.remove('json-error'); // Remove error style if present
     }
     catch (err) {
         outputElement.textContent = "❌ Invalid JSON!";
+        outputElement.classList.add('json-error'); // Add error style
         console.error("Parsing error:", err);
     }
 });
@@ -30,13 +36,7 @@ document.getElementById('copy-json').addEventListener('click', () => {
     });
 });
 
-document.getElementById('toggle-theme').addEventListener('click', () => {
-  document.body.classList.toggle('light-theme');
-});
 
-document.getElementById('toggle-fonts').addEventListener('click', () => {
-  document.body.classList.toggle('accessible-fonts');
-});
 
 function hexToRgb(hex) {
   hex = hex.replace(/^#/, '');
@@ -126,5 +126,23 @@ document.getElementById('reset-timestamp').addEventListener('click', () => {
 
 document.getElementById('reset-json').addEventListener('click', () => {
   document.getElementById('json-input').value = '';
-  document.getElementById('json-output').textContent = '';
+  const outputElement = document.getElementById('json-output');
+  outputElement.textContent = '';
+  outputElement.classList.remove('json-error');
+  // If you have a separate error element, clear it here:
+  // document.getElementById('json-error').textContent = '';
 });
+
+// Fade-in each toolbox-tool card on scroll or load
+function revealToolboxTools() {
+  document.querySelectorAll('.toolbox-tool').forEach((tool, idx) => {
+    const rect = tool.getBoundingClientRect();
+    if (rect.top < window.innerHeight - 60) {
+      // Add a staggered delay for a modern effect
+      setTimeout(() => tool.classList.add('visible'), idx * 120);
+    }
+  });
+}
+
+window.addEventListener('scroll', revealToolboxTools);
+window.addEventListener('DOMContentLoaded', revealToolboxTools);
