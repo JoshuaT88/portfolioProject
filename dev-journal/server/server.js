@@ -1,3 +1,4 @@
+console.log('✅ Booting Express server...');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
