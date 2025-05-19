@@ -11,7 +11,7 @@ function App() {
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    axios.get('https://portfolioproject-5jlv.onrender.com/api/posts')
+    axios.get('https://portfolioproject-1.onrender.com/api/posts')
       .then(res => {
         setPosts(res.data);
         setLoading(false);
