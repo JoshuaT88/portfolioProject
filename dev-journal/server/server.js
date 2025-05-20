@@ -14,6 +14,8 @@ app.use(express.json());
 
 // Routes
 app.use('/api/posts', require('./routes/postRoutes'));
+app.use('/api/comments', require('./routes/commentRoutes'));
+app.use('/api/notifications', require('./routes/notificationRoutes'));
 
 // DB connect + start server
 const PORT = process.env.PORT || 5000;

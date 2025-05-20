@@ -5,6 +5,7 @@ import './App.css';
 import { auth } from './firebase';
 import SignIn from './signIn';
 import SettingsMenu from './settingsMenu';
+import CommentSection from './CommentSection';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -86,6 +87,30 @@ function App() {
     }
   };
 
+  const handleLike = async (postId) => {
+    try {
+      await axios.put(`https://portfolioproject-1.onrender.com/api/posts/like/${postId}`, {
+        userId: user.uid
+      });
+      setPosts(posts.map(post => {
+        if (post._id === postId) {
+          const liked = post.likes.includes(user.uid);
+          return {
+            ...post,
+            likes: liked ? post.likes.filter(id => id !== user.uid) : [...post.likes, user.uid]
+          };
+        }
+        return post;
+      }));
+    } catch (err) {
+      console.error('Like error:', err);
+    }
+  };
+
+  const parseMentions = (text) => {
+    return text.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
+  };
+
   if (!user) return <SignIn onLogin={() => {}} />;
 
   return (
@@ -115,22 +140,28 @@ function App() {
           posts.map(post => (
             <div key={post._id} className="post-card">
               <h2>{post.title}</h2>
-              <p>{post.body}</p>
+              <p dangerouslySetInnerHTML={{ __html: parseMentions(post.body) }} />
               <small>
                 Posted by: {post.authorName || 'Unknown'} <br />
                 {new Date(post.date).toLocaleString()}
               </small>
 
-              {post.authorId === user.uid && (
-                <div className="post-buttons">
-                  <button className="edit" onClick={() => {
-                    setEditingPostId(post._id);
-                    setEditForm({ title: post.title, body: post.body });
-                  }}>Edit</button>
+              <div className="post-buttons">
+                <button onClick={() => handleLike(post._id)}>
+                  ❤️ {post.likes?.length || 0}
+                </button>
 
-                  <button className="delete" onClick={() => handleDelete(post._id)}>Delete</button>
-                </div>
-              )}
+                {post.authorId === user.uid && (
+                  <>
+                    <button className="edit" onClick={() => {
+                      setEditingPostId(post._id);
+                      setEditForm({ title: post.title, body: post.body });
+                    }}>Edit</button>
+
+                    <button className="delete" onClick={() => handleDelete(post._id)}>Delete</button>
+                  </>
+                )}
+              </div>
 
               {editingPostId === post._id && (
                 <form className="edit-form" onSubmit={(e) => {
@@ -149,6 +180,8 @@ function App() {
                   <button type="submit" className="save">Save</button>
                 </form>
               )}
+
+              <CommentSection postId={post._id} user={user} />
             </div>
           ))
         )}

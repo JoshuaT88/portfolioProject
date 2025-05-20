@@ -5,7 +5,9 @@ const postSchema = new mongoose.Schema({
   body: String,
   authorId: { type: String, required: true },
   authorName: { type: String },
-  date: { type: Date, default: Date.now }
+  date: { type: Date, default: Date.now },
+  likes: [String], 
+
 });
 
 module.exports = mongoose.model('Post', postSchema);
