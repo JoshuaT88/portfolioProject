@@ -5,7 +5,8 @@ import { signOut } from 'firebase/auth';
 import { auth } from './firebase';
 
 function SettingsMenu({ user }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);           // Toggle settings panel
+  const [showPrefs, setShowPrefs] = useState(false); // Toggle Preferences submenu
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -14,7 +15,10 @@ function SettingsMenu({ user }) {
 
   return (
     <>
-      <div className="settings-cog" onClick={() => setOpen(!open)}>
+      <div
+        className={`settings-cog ${open ? 'open' : ''}`}
+        onClick={() => setOpen(!open)}
+      >
         <i className="fas fa-cog"></i>
       </div>
 
@@ -28,6 +32,31 @@ function SettingsMenu({ user }) {
           <h4>Profile</h4>
           {user?.photoURL && <img src={user.photoURL} alt="User" className="profile-pic" />}
           <p>{user?.displayName || user?.email}</p>
+        </div>
+
+        <div className="settings-section">
+          <h4>Preferences</h4>
+          <button onClick={() => setShowPrefs(!showPrefs)}>Customize</button>
+
+          {showPrefs && (
+            <div className="preferences-menu">
+              <label>
+                Theme:
+                <select>
+                  <option>Dark</option>
+                  <option>Light</option>
+                  <option>System</option>
+                </select>
+              </label>
+
+              <label>
+                Notifications:
+                <input type="checkbox" disabled /> Enable @mention alerts (coming soon)
+              </label>
+
+              <button className="reset-prefs">Reset to default</button>
+            </div>
+          )}
         </div>
 
         <div className="settings-section">
