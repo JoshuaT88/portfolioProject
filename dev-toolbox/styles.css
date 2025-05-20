@@ -1,5 +1,5 @@
 :root {
-     --bg-color: #0d1117;
+  --bg-color: #0d1117;
   --text-color: #ffffff;
   --accent-color: #58a6ff;
   --font-base: 'Inter', sans-serif;
@@ -13,22 +13,7 @@
 }
 
 /* --- BASE & BACKGROUND --- */
-/* --- BASE & BACKGROUND --- */
 body {
-  font-family: 'Segoe UI', 'Arial', sans-serif;
-  background: linear-gradient(-45deg, #23272a, #444950 25%, #bfc2c7 50%, #23272a 75%, #181a1b 100%);
-  background-size: 400% 400%;
-  animation: gradientBG 12s ease-in-out infinite;
-  color: #e0e0e0;
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-}
-
-@keyframes gradientBG {
-  0% {background-position: 0% 50%;}
-  50% {background-position: 100% 50%;}
-  100% {background-position: 0% 50%;}
   font-family: 'Segoe UI', 'Arial', sans-serif;
   background: linear-gradient(-45deg, #23272a, #444950 25%, #bfc2c7 50%, #23272a 75%, #181a1b 100%);
   background-size: 400% 400%;
@@ -78,32 +63,8 @@ body.accessible-fonts {
   display: flex;
   justify-content: center;
   gap: 1em;
-/* --- HEADER --- */
-.toolbox-header {
-  text-align: center;
-  margin-bottom: 32px;
-  margin-top: 40px;
-}
-.toolbox-header h1 {
-  font-size: 2.2rem;
-  color: #ffd166;
-  margin-bottom: 0.5rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-.toolbox-header p {
-  color: #b0b0b0;
-  font-size: 1.1rem;
-}
-#toggles {
-  margin-top: 1rem;
-  display: flex;
-  justify-content: center;
-  gap: 1em;
 }
 
-/* --- GRID LAYOUT FOR TOOLS --- */
-.toolbox-container {
 /* --- GRID LAYOUT FOR TOOLS --- */
 .toolbox-container {
   display: grid;
@@ -112,11 +73,6 @@ body.accessible-fonts {
   max-width: 1100px;
   margin: 0 auto 40px auto;
   padding: 0 2vw 40px 2vw;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 32px;
-  max-width: 1100px;
-  margin: 0 auto 40px auto;
-  padding: 0 2vw 40px 2vw;
 }
 
 /* --- TOOL CARD --- */
@@ -130,79 +86,11 @@ body.accessible-fonts {
   flex-direction: column;
   gap: 18px;
   border: 1.5px solid #393e46;
-  transition: box-shadow 0.18s, border-color 0.18s;
-  opacity: 0;
-  transform: translateY(40px) scale(0.98);
-  transition:
+  transition: box-shadow 0.18s, border-color 0.18s,
     opacity 0.8s cubic-bezier(.4,2,.6,1),
     transform 0.8s cubic-bezier(.4,2,.6,1);
-  will-change: opacity, transform;
-}
-.toolbox-tool:hover {
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-  border-color: #ffd166;
-}
-.toolbox-tool.visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-.toolbox-tool h2 {
-  color: #ffd166;
-  font-size: 1.3rem;
-  margin-bottom: 0.5em;
-  font-weight: 600;
-}
-
-/* --- LINKS --- */
-.toolbox-links {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.7em;
-}
-.toolbox-links a {
-  color: #8ecae6;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 1.08rem;
-  display: flex;
-  align-items: center;
-  gap: 0.6em;
-  transition: color 0.18s;
-}
-.toolbox-links a:hover {
-  color: #ffd166;
-}
-
-.toolbox-instructions {
-  color: #b0b0b0;
-  font-size: 0.98rem;
-  margin-bottom: 0.7em;
-  margin-top: -0.5em;
-}
-
-.json-error {
-  color: #ff6b6b;
-  background: #23272a;
-/* --- TOOL CARD --- */
-/* Fade-in animation for toolbox-tool cards */
-.toolbox-tool {
-  background: rgba(30,32,34,0.96);
-  border-radius: 18px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-  padding: 32px 24px 24px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  border: 1.5px solid #393e46;
-  transition: box-shadow 0.18s, border-color 0.18s;
   opacity: 0;
   transform: translateY(40px) scale(0.98);
-  transition:
-    opacity 0.8s cubic-bezier(.4,2,.6,1),
-    transform 0.8s cubic-bezier(.4,2,.6,1);
   will-change: opacity, transform;
 }
 .toolbox-tool:hover {
@@ -255,22 +143,10 @@ body.accessible-fonts {
   background: #23272a;
 }
 
-/* --- INPUTS & TEXTAREAS --- */
-.toolbox-input,
 /* --- INPUTS & TEXTAREAS --- */
 .toolbox-input,
 textarea {
   width: 100%;
-  padding: 0.8em 1em;
-  border-radius: 10px;
-  border: 1.5px solid #393e46;
-  background: #23272a;
-  color: #ffd166;
-  font-size: 1.05rem;
-  margin-bottom: 0.7em;
-  box-sizing: border-box;
-  transition: border-color 0.2s;
-  font-family: 'Segoe UI', 'Arial', sans-serif;
   padding: 0.8em 1em;
   border-radius: 10px;
   border: 1.5px solid #393e46;
@@ -288,39 +164,7 @@ textarea:focus {
   border-color: #ffd166;
   outline: none;
 }
-.toolbox-input:focus,
-textarea:focus {
-  border-color: #ffd166;
-  outline: none;
-}
 
-/* --- OUTPUTS --- */
-.toolbox-output,
-pre {
-  background: #181a1b;
-  color: #8ecae6;
-  border: 1.5px solid #393e46;
-  border-radius: 10px;
-  padding: 0.8em 1em;
-  font-size: 1.02rem;
-  margin-top: 0.5em;
-  min-height: 2em;
-  font-family: 'Fira Mono', 'Consolas', monospace;
-  overflow-x: auto;
-}
-
-/* --- BUTTONS --- */
-.toolbox-actions,
-.color-actions,
-.timestamp-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7em;
-  margin-bottom: 0.5em;
-}
-.toolbox-btn {
-  background: linear-gradient(90deg, #ffd166 0%, #8ecae6 100%);
-  color: #23272a;
 /* --- OUTPUTS --- */
 .toolbox-output,
 pre {
@@ -354,11 +198,6 @@ pre {
   font-size: 1.05rem;
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-  border-radius: 12px;
-  padding: 0.7em 1.5em;
-  font-size: 1.05rem;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
   cursor: pointer;
   transition: background 0.2s, color 0.2s, transform 0.18s;
   outline: none;
@@ -380,35 +219,8 @@ label {
   font-size: 1rem;
   margin-bottom: 0.2em;
   font-weight: 500;
-  transition: background 0.2s, color 0.2s, transform 0.18s;
-  outline: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6em;
-}
-.toolbox-btn:hover,
-.toolbox-btn:focus {
-  background: linear-gradient(90deg, #8ecae6 0%, #ffd166 100%);
-  color: #23272a;
-  transform: translateY(-3px) scale(1.04);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.16);
 }
 
-/* --- LABELS --- */
-label {
-  color: #b0b0b0;
-  font-size: 1rem;
-  margin-bottom: 0.2em;
-  font-weight: 500;
-}
-
-/* --- COLOR PREVIEW --- */
-#color-preview {
-  border-radius: 8px;
-  border: 1.5px solid #393e46;
-  background: #23272a;
-  min-height: 40px;
-  margin-top: 1rem;
 /* --- COLOR PREVIEW --- */
 #color-preview {
   border-radius: 8px;
@@ -432,16 +244,3 @@ label {
   }
 }
 
-/* --- RESPONSIVE --- */
-@media (max-width: 700px) {
-  .toolbox-container {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-  .toolbox-tool {
-    padding: 18px 8px 16px 8px;
-  }
-  .toolbox-header {
-    margin-top: 20px;
-  }
-}
