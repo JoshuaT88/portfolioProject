@@ -14,7 +14,6 @@ function App() {
   const [editForm, setEditForm] = useState({ title: '', body: '' });
   const [toast, setToast] = useState(null);
 
-  // Monitor login status
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -22,7 +21,6 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  // Fetch posts
   useEffect(() => {
     if (!user) return;
     axios.get('https://portfolioproject-1.onrender.com/api/posts')
@@ -43,7 +41,11 @@ function App() {
     }
 
     try {
-      const res = await axios.post('https://portfolioproject-1.onrender.com/api/posts', form);
+      const res = await axios.post('https://portfolioproject-1.onrender.com/api/posts', {
+        ...form,
+        authorId: user.uid,
+        authorName: user.displayName || user.email
+      });
       setPosts([res.data, ...posts]);
       setForm({ title: '', body: '' });
       showToast('Post added!', 'success');
@@ -54,29 +56,33 @@ function App() {
   };
 
   const handleDelete = async (id) => {
-    const confirm = window.confirm('Are you sure you want to delete this post?');
-    if (!confirm) return;
+    if (!window.confirm('Are you sure you want to delete this post?')) return;
 
     try {
-      await axios.delete(`https://portfolioproject-1.onrender.com/api/posts/${id}`);
+      await axios.delete(`https://portfolioproject-1.onrender.com/api/posts/${id}`, {
+        data: { userId: user.uid }
+      });
       setPosts(posts.filter(post => post._id !== id));
       showToast('Post deleted', 'success');
     } catch (err) {
       console.error('Delete error:', err);
-      showToast('Failed to delete post', 'error');
+      showToast('Not authorized to delete this post', 'error');
     }
   };
 
   const handleUpdate = async (id) => {
     try {
-      const res = await axios.put(`https://portfolioproject-1.onrender.com/api/posts/${id}`, editForm);
+      const res = await axios.put(`https://portfolioproject-1.onrender.com/api/posts/${id}`, {
+        ...editForm,
+        userId: user.uid
+      });
       setPosts(posts.map(post => (post._id === id ? res.data : post)));
       setEditingPostId(null);
       setEditForm({ title: '', body: '' });
       showToast('Post updated!', 'success');
     } catch (err) {
       console.error('Update error:', err);
-      showToast('Update failed', 'error');
+      showToast('Update failed or unauthorized', 'error');
     }
   };
 
@@ -84,71 +90,75 @@ function App() {
 
   return (
     <>
-    {user && <SettingsMenu user={user} />}
-    <div className="app-container">
-      <h1 className="app-title">📝 Dev Journal</h1>
+      {user && <SettingsMenu user={user} />}
+      <div className="app-container">
+        <h1 className="app-title">📝 Dev Journal</h1>
 
-      <form className="post-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Post title"
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
-        />
-        <textarea
-          placeholder="Post body"
-          value={form.body}
-          onChange={(e) => setForm({ ...form, body: e.target.value })}
-        />
-        <button type="submit">+ Add Post</button>
-      </form>
+        <form className="post-form" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Post title"
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+          />
+          <textarea
+            placeholder="Post body"
+            value={form.body}
+            onChange={(e) => setForm({ ...form, body: e.target.value })}
+          />
+          <button type="submit">+ Add Post</button>
+        </form>
 
-      {posts.length === 0 ? (
-        <p className="empty-message">No posts yet.</p>
-      ) : (
-        posts.map(post => (
-          <div key={post._id} className="post-card">
-            <h2>{post.title}</h2>
-            <p>{post.body}</p>
-            <small>{new Date(post.date).toLocaleString()}</small>
+        {posts.length === 0 ? (
+          <p className="empty-message">No posts yet.</p>
+        ) : (
+          posts.map(post => (
+            <div key={post._id} className="post-card">
+              <h2>{post.title}</h2>
+              <p>{post.body}</p>
+              <small>
+                Posted by: {post.authorName || 'Unknown'} <br />
+                {new Date(post.date).toLocaleString()}
+              </small>
 
-            <div className="post-buttons">
-              <button className="edit" onClick={() => {
-                setEditingPostId(post._id);
-                setEditForm({ title: post.title, body: post.body });
-              }}>Edit</button>
+              {post.authorId === user.uid && (
+                <div className="post-buttons">
+                  <button className="edit" onClick={() => {
+                    setEditingPostId(post._id);
+                    setEditForm({ title: post.title, body: post.body });
+                  }}>Edit</button>
 
-              <button className="delete" onClick={() => handleDelete(post._id)}>Delete</button>
+                  <button className="delete" onClick={() => handleDelete(post._id)}>Delete</button>
+                </div>
+              )}
+
+              {editingPostId === post._id && (
+                <form className="edit-form" onSubmit={(e) => {
+                  e.preventDefault();
+                  handleUpdate(post._id);
+                }}>
+                  <input
+                    type="text"
+                    value={editForm.title}
+                    onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                  />
+                  <textarea
+                    value={editForm.body}
+                    onChange={(e) => setEditForm({ ...editForm, body: e.target.value })}
+                  />
+                  <button type="submit" className="save">Save</button>
+                </form>
+              )}
             </div>
+          ))
+        )}
 
-            {editingPostId === post._id && (
-              <form className="edit-form" onSubmit={(e) => {
-                e.preventDefault();
-                handleUpdate(post._id);
-              }}>
-                <input
-                  type="text"
-                  value={editForm.title}
-                  onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                />
-                <textarea
-                  value={editForm.body}
-                  onChange={(e) => setEditForm({ ...editForm, body: e.target.value })}
-                />
-                <button type="submit" className="save">Save</button>
-              </form>
-            )}
-          </div>
-        ))
-      )}
-
-      {toast && (
-        <div className={`toast ${toast.type}`}>{toast.msg}</div>
-      )}
-    </div>
+        {toast && (
+          <div className={`toast ${toast.type}`}>{toast.msg}</div>
+        )}
+      </div>
     </>
   );
 }
 
 export default App;
-
