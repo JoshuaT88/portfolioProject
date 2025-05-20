@@ -84,16 +84,11 @@ function App() {
 
   if (!user) return <SignIn onLogin={() => {}} />;
 
-  return (
-    <>
+return (
+  <>
     {user && <SettingsMenu user={user} />}
     <div className="app-container">
       <h1 className="app-title">📝 Dev Journal</h1>
-
-  return (
-    <div className="app-container">
-      <h1 className="app-title">📝 Dev Journal</h1>
-
 
       <form className="post-form" onSubmit={handleSubmit}>
         <input
@@ -153,8 +148,8 @@ function App() {
         <div className={`toast ${toast.type}`}>{toast.msg}</div>
       )}
     </div>
-    </>
-  );
+  </>
+);
 }
 
 export default App;
