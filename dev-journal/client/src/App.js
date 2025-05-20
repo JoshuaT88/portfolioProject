@@ -81,7 +81,7 @@ function App() {
     }
   };
 
-<<<<<<< HEAD
+
   if (!user) return <SignIn onLogin={() => {}} />;
 
   return (
@@ -90,12 +90,11 @@ function App() {
     <div className="app-container">
       <h1 className="app-title">📝 Dev Journal</h1>
 
-=======
   return (
     <div className="app-container">
       <h1 className="app-title">📝 Dev Journal</h1>
 
->>>>>>> 2286c78f6bc3263717aaccc8ebd02b65e2058950
+
       <form className="post-form" onSubmit={handleSubmit}>
         <input
           type="text"
