@@ -1,26 +1,34 @@
 import React, { useEffect, useState } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
 import axios from 'axios';
 import './App.css';
+import { auth } from './firebase';
+import SignIn from './signIn';
+import SettingsMenu from './settingsMenu';
 
 function App() {
+  const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [form, setForm] = useState({ title: '', body: '' });
   const [editingPostId, setEditingPostId] = useState(null);
   const [editForm, setEditForm] = useState({ title: '', body: '' });
-  const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
 
+  // Monitor login status
   useEffect(() => {
-    axios.get('https://portfolioproject-1.onrender.com/api/posts')
-      .then(res => {
-        setPosts(res.data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Fetch error:', err);
-        setLoading(false);
-      });
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
   }, []);
+
+  // Fetch posts
+  useEffect(() => {
+    if (!user) return;
+    axios.get('https://portfolioproject-1.onrender.com/api/posts')
+      .then(res => setPosts(res.data))
+      .catch(err => console.error('Fetch error:', err));
+  }, [user]);
 
   const showToast = (msg, type = 'info') => {
     setToast({ msg, type });
@@ -72,7 +80,11 @@ function App() {
     }
   };
 
+  if (!user) return <SignIn onLogin={() => {}} />;
+
   return (
+    <>
+    {user && <SettingsMenu user={user} />}
     <div className="app-container">
       <h1 className="app-title">📝 Dev Journal</h1>
 
@@ -129,7 +141,12 @@ function App() {
           </div>
         ))
       )}
+
+      {toast && (
+        <div className={`toast ${toast.type}`}>{toast.msg}</div>
+      )}
     </div>
+    </>
   );
 }
 

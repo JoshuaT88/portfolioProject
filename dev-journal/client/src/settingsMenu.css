@@ -1,0 +1,87 @@
+.settings-cog {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+
+  color: #ffffff;
+    background: #444950;
+  font-size: 1.5rem;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 2000;
+
+}
+
+.settings-cog:hover {
+  background: #2d3135;
+}
+
+.settings-panel {
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: 300px;
+  height: 100vh;
+  background: #fff;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+  z-index: 1999;
+  padding: 20px;
+  transition: right 0.3s ease;
+  overflow-y: auto;
+}
+
+.settings-panel.open {
+  right: 0;
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 8px;
+}
+
+.settings-header button {
+  font-size: 1.4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.settings-section {
+  margin-top: 20px;
+}
+
+.settings-section h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.settings-section p,
+.settings-section a {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.profile-pic {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+}
+
+.logout-btn {
+  margin-top: 20px;
+  background-color: #e63946;
+  color: #fff;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: 500;
+  font-size: 1rem;
+}
