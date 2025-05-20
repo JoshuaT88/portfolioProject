@@ -161,3 +161,23 @@ body[data-theme="system"] {
     padding: 1rem;
   }
 }
+
+.mention {
+  color: #ffd166;
+  font-weight: bold;
+}
+.post-buttons button {
+  margin-right: 8px;
+  background-color: #2d2d2d;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.post-buttons button:hover {
+  background-color: #444;
+  color: #ffd166;
+}
