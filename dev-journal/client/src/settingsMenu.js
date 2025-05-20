@@ -1,5 +1,5 @@
 // src/SettingsMenu.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './settingsMenu.css';
 import { signOut } from 'firebase/auth';
 import { auth } from './firebase';
@@ -7,6 +7,24 @@ import { auth } from './firebase';
 function SettingsMenu({ user }) {
   const [open, setOpen] = useState(false);           // Toggle settings panel
   const [showPrefs, setShowPrefs] = useState(false); // Toggle Preferences submenu
+  const [theme, setTheme] = useState('dark');         // Theme state
+
+  // Load saved preference on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme-preference');
+    if (savedTheme) {
+      setTheme(savedTheme);
+      document.body.setAttribute('data-theme', savedTheme);
+    } else {
+      document.body.setAttribute('data-theme', 'dark');
+    }
+  }, []);
+
+  // Update body attribute and store theme
+  useEffect(() => {
+    document.body.setAttribute('data-theme', theme);
+    localStorage.setItem('theme-preference', theme);
+  }, [theme]);
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -42,10 +60,10 @@ function SettingsMenu({ user }) {
             <div className="preferences-menu">
               <label>
                 Theme:
-                <select>
-                  <option>Dark</option>
-                  <option>Light</option>
-                  <option>System</option>
+                <select value={theme} onChange={(e) => setTheme(e.target.value)}>
+                  <option value="dark">Dark</option>
+                  <option value="light">Light</option>
+                  <option value="system">System</option>
                 </select>
               </label>
 
@@ -54,7 +72,15 @@ function SettingsMenu({ user }) {
                 <input type="checkbox" disabled /> Enable @mention alerts (coming soon)
               </label>
 
-              <button className="reset-prefs">Reset to default</button>
+              <button
+                className="reset-prefs"
+                onClick={() => {
+                  setTheme('dark');
+                  localStorage.removeItem('theme-preference');
+                }}
+              >
+                Reset to default
+              </button>
             </div>
           )}
         </div>
