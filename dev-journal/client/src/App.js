@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import axios from 'axios';
 import './App.css';
+<<<<<<< HEAD
 import { auth } from './firebase';
 import SignIn from './signIn';
 import SettingsMenu from './settingsMenu';
+=======
+>>>>>>> 2286c78f6bc3263717aaccc8ebd02b65e2058950
 
 function App() {
   const [user, setUser] = useState(null);
@@ -80,6 +83,7 @@ function App() {
     }
   };
 
+<<<<<<< HEAD
   if (!user) return <SignIn onLogin={() => {}} />;
 
   return (
@@ -88,6 +92,12 @@ function App() {
     <div className="app-container">
       <h1 className="app-title">📝 Dev Journal</h1>
 
+=======
+  return (
+    <div className="app-container">
+      <h1 className="app-title">📝 Dev Journal</h1>
+
+>>>>>>> 2286c78f6bc3263717aaccc8ebd02b65e2058950
       <form className="post-form" onSubmit={handleSubmit}>
         <input
           type="text"
@@ -151,3 +161,4 @@ function App() {
 }
 
 export default App;
+
