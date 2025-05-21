@@ -7,6 +7,7 @@ const postSchema = new mongoose.Schema({
   authorName: { type: String },
   date: { type: Date, default: Date.now },
   likes: [String], 
+  default: []
 
 });
 

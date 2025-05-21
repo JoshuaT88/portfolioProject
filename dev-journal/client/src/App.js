@@ -89,16 +89,18 @@ function App() {
 
   const handleLike = async (postId) => {
     try {
-      await axios.put(`https://portfolioproject-1.onrender.com/api/posts/like/${postId}`, {
+      const res = await axios.put(`https://portfolioproject-1.onrender.com/api/likes/${postId}`, {
         userId: user.uid
       });
+
       setPosts(posts.map(post => {
         if (post._id === postId) {
-          const liked = post.likes.includes(user.uid);
-          return {
-            ...post,
-            likes: liked ? post.likes.filter(id => id !== user.uid) : [...post.likes, user.uid]
-          };
+          const alreadyLiked = (post.likes || []).includes(user.uid);
+          const updatedLikes = alreadyLiked
+            ? post.likes.filter(id => id !== user.uid)
+            : [...(post.likes || []), user.uid];
+
+          return { ...post, likes: updatedLikes };
         }
         return post;
       }));
@@ -117,7 +119,7 @@ function App() {
     <>
       {user && <SettingsMenu user={user} />}
       <div className="app-container">
-        <h1 className="app-title">📝 Dev Journal</h1>
+        <h1 className="app-title">Dev Journal</h1>
 
         <form className="post-form" onSubmit={handleSubmit}>
           <input
