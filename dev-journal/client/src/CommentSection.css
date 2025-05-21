@@ -1,24 +1,37 @@
 /* CommentSection.css */
+
 .comment-section {
   margin-top: 1rem;
   border-top: 1px solid #444;
   padding-top: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .comment-section h4 {
   margin-bottom: 0.5rem;
   color: #eee;
   font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.comments-list {
+  margin-top: 1rem;
 }
 
 .comment {
   background-color: #1f1f1f;
-  padding: 0.6rem 1rem;
+  padding: 0.7rem 1rem;
   border-radius: 6px;
-  margin-bottom: 0.75rem;
-  color: #ccc;
+  margin-bottom: 0.8rem;
+  color: #ddd;
   font-size: 0.95rem;
-  line-height: 1.5;
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+.comment strong {
+  color: #ffd166;
+  font-weight: 600;
 }
 
 .comment small {
@@ -26,6 +39,13 @@
   color: #888;
   font-size: 0.75rem;
   margin-top: 4px;
+}
+
+.no-comments {
+  color: #888;
+  font-style: italic;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
 }
 
 .loading-comments {
@@ -41,16 +61,17 @@
   gap: 0.5rem;
 }
 
+.comment-form input,
 .comment-form textarea {
-  resize: vertical;
-  min-height: 60px;
-  padding: 0.5rem;
+  width: 100%;
+  padding: 0.6rem;
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 0.95rem;
   background: #2d2d2d;
   color: #fff;
   border: 1px solid #555;
   border-radius: 4px;
+  resize: vertical;
 }
 
 .comment-form button {
@@ -66,4 +87,15 @@
 
 .comment-form button:hover {
   background: #1d3557;
+}
+
+@media (max-width: 600px) {
+  .comment-form button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .comment {
+    font-size: 0.9rem;
+  }
 }

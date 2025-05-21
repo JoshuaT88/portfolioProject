@@ -1,65 +1,67 @@
-// CommentSection.js
-import React, { useState, useEffect } from 'react';
+// src/CommentSection.js
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './CommentSection.css';
+import './CommentSection.css'; // Optional: style the comment UI
 
 function CommentSection({ postId, user }) {
   const [comments, setComments] = useState([]);
-  const [commentBody, setCommentBody] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [text, setText] = useState('');
 
   useEffect(() => {
-    axios.get(`https://portfolioproject-1.onrender.com/api/comments/${postId}`)
-      .then(res => {
+    const fetchComments = async () => {
+      try {
+        const res = await axios.get(`https://portfolioproject-1.onrender.com/api/comments/${postId}`);
         setComments(res.data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Comment fetch error:', err);
-        setLoading(false);
-      });
+      } catch (err) {
+        console.error('Fetch comments error:', err);
+      }
+    };
+
+    fetchComments();
   }, [postId]);
 
-  const handleSubmit = async (e) => {
+  const handleComment = async (e) => {
     e.preventDefault();
-    if (!commentBody) return;
+    if (!text.trim()) return;
 
     try {
-      const res = await axios.post(`https://portfolioproject-1.onrender.com/api/comments/${postId}`, {
-        body: commentBody,
+      const res = await axios.post('https://portfolioproject-1.onrender.com/api/comments', {
+        postId,
+        text,
         userId: user.uid,
         userName: user.displayName || user.email
       });
       setComments([...comments, res.data]);
-      setCommentBody('');
+      setText('');
     } catch (err) {
-      console.error('Comment submit error:', err);
+      console.error('Post comment error:', err);
     }
   };
 
   return (
     <div className="comment-section">
-      <h4>Comments</h4>
-
-      {loading ? (
-        <p className="loading-comments">Loading comments...</p>
-      ) : (
-        comments.map(comment => (
-          <div key={comment._id} className="comment">
-            <p>{comment.body}</p>
-            <small>— {comment.userName} • {new Date(comment.date).toLocaleString()}</small>
-          </div>
-        ))
-      )}
-
-      <form className="comment-form" onSubmit={handleSubmit}>
-        <textarea
+      <form onSubmit={handleComment} className="comment-form">
+        <input
+          type="text"
           placeholder="Write a comment..."
-          value={commentBody}
-          onChange={(e) => setCommentBody(e.target.value)}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
         />
-        <button type="submit">Reply</button>
+        <button type="submit">Post</button>
       </form>
+
+      <div className="comments-list">
+        {comments.length === 0 ? (
+          <p className="no-comments">No comments yet.</p>
+        ) : (
+          comments.map(comment => (
+            <div key={comment._id} className="comment">
+              <strong>{comment.userName}:</strong>
+              <span> {comment.text}</span>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }
