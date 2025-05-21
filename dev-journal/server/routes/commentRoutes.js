@@ -1,15 +1,25 @@
-// server/routes/commentRoutes.js
 const express = require('express');
 const router = express.Router();
-const {
-  createComment,
-  getComments
-} = require('../controllers/commentController');
+const Comment = require('../models/Comment');
 
-// POST a comment to a specific post
-router.post('/:postId', createComment);
+router.post('/', async (req, res) => {
+  const { postId, text, userId, userName } = req.body;
+  try {
+    const comment = new Comment({ postId, text, userId, userName });
+    const saved = await comment.save();
+    res.status(201).json(saved);
+  } catch {
+    res.status(500).json({ error: 'Comment failed' });
+  }
+});
 
-// GET all comments for a specific post
-router.get('/:postId', getComments);
+router.get('/:postId', async (req, res) => {
+  try {
+    const comments = await Comment.find({ postId: req.params.postId });
+    res.json(comments);
+  } catch {
+    res.status(400).json({ error: 'Bad request' });
+  }
+});
 
 module.exports = router;
