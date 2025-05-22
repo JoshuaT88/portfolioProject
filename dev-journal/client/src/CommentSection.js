@@ -1,7 +1,7 @@
 // src/CommentSection.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './commentSection.css';
+import './CommentSection.css';
 
 function CommentSection({ postId, user }) {
   const [comments, setComments] = useState([]);
