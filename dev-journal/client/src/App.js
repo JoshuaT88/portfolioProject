@@ -8,6 +8,7 @@ import SignIn from './signIn';
 import SettingsMenu from './settingsMenu';
 import CommentSection from './CommentSection';
 import SetupAccount from './setupAccount';
+import NotificationPanel from './NotificationPanel';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -19,7 +20,6 @@ function App() {
   const [editForm, setEditForm] = useState({ title: '', body: '' });
   const [toast, setToast] = useState(null);
 
-  // 1. Listen for Firebase login, check if user has completed setup
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -42,17 +42,14 @@ function App() {
   }, []);
 
   useEffect(() => {
-  const interval = setInterval(() => {
-    fetch('https://portfolioproject-1.onrender.com/api/posts')
-      .then(() => console.log("🔁 Backend pinged to stay awake"))
-      .catch((err) => console.error("Ping failed:", err));
-  }, 1000 * 60 * 14); // every 14 minutes
+    const interval = setInterval(() => {
+      fetch('https://portfolioproject-1.onrender.com/api/posts')
+        .then(() => console.log("🔁 Backend pinged to stay awake"))
+        .catch((err) => console.error("Ping failed:", err));
+    }, 1000 * 60 * 14); // every 14 minutes
+    return () => clearInterval(interval);
+  }, []);
 
-  return () => clearInterval(interval);
-}, []);
-    // Keep the server awake by pinging it every 14 minutes
-
-  // 2. Fetch posts once the user is ready
   useEffect(() => {
     if (!user) return;
     setLoading(true);
@@ -152,21 +149,22 @@ function App() {
   if (loading) return <p style={{ textAlign: 'center', marginTop: '3rem' }}>Loading...</p>;
   if (!user && !isNewUser) return <SignIn onLogin={() => {}} />;
   if (isNewUser) {
-  return (
-    <SetupAccount
-      user={auth.currentUser}
-      onComplete={() => {
-        setIsNewUser(false);
-        setUser(auth.currentUser); // 👈 this should re-trigger feed
-      }}
-    />
-  );
-}
-
+    return (
+      <SetupAccount
+        user={auth.currentUser}
+        onComplete={() => {
+          setIsNewUser(false);
+          setUser(auth.currentUser);
+        }}
+      />
+    );
+  }
 
   return (
     <>
       {user && <SettingsMenu user={user} />}
+      {user && <NotificationPanel userId={user.uid} />}
+
       <div className="app-container">
         <h1 className="app-title">Dev Journal</h1>
 
