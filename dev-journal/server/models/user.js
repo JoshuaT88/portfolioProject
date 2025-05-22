@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  firebaseUID: { type: String, required: true, unique: true },
-  username: { type: String, required: true, unique: true },
+  firebaseUid: String,
+  username: String,
+  password: String,
   email: String,
-  passwordHash: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
+  notificationPrefs: {
+    type: String,
+    enum: ['email', 'push', 'in-app'],
+    default: 'in-app'
+  }
 });
 
 module.exports = mongoose.model('User', userSchema);
