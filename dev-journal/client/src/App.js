@@ -10,6 +10,7 @@ import CommentSection from './CommentSection';
 import SetupAccount from './setupAccount';
 
 function App() {
+  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [isNewUser, setIsNewUser] = useState(false);
   const [posts, setPosts] = useState([]);
@@ -18,6 +19,7 @@ function App() {
   const [editForm, setEditForm] = useState({ title: '', body: '' });
   const [toast, setToast] = useState(null);
 
+  // 1. Listen for Firebase login, check if user has completed setup
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -31,16 +33,27 @@ function App() {
         } catch {
           setIsNewUser(true);
         }
+      } else {
+        setUser(null);
       }
+      setLoading(false);
     });
     return () => unsubscribe();
   }, []);
 
+  // 2. Fetch posts once the user is ready
   useEffect(() => {
     if (!user) return;
+    setLoading(true);
     axios.get('https://portfolioproject-1.onrender.com/api/posts')
-      .then(res => setPosts(res.data))
-      .catch(err => console.error('Fetch error:', err));
+      .then(res => {
+        setPosts(res.data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Fetch error:', err);
+        setLoading(false);
+      });
   }, [user]);
 
   const showToast = (msg, type = 'info') => {
@@ -112,7 +125,6 @@ function App() {
           const updatedLikes = alreadyLiked
             ? post.likes.filter(id => id !== user.uid)
             : [...(post.likes || []), user.uid];
-
           return { ...post, likes: updatedLikes };
         }
         return post;
@@ -126,6 +138,7 @@ function App() {
     return text.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
   };
 
+  if (loading) return <p style={{ textAlign: 'center', marginTop: '3rem' }}>Loading...</p>;
   if (!user && !isNewUser) return <SignIn onLogin={() => {}} />;
   if (isNewUser) return <SetupAccount user={auth.currentUser} onComplete={() => setUser(auth.currentUser)} />;
 

@@ -181,3 +181,9 @@ body[data-theme="system"] {
   background-color: #444;
   color: #ffd166;
 }
+.loading-message {
+  color: #ccc;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 1rem;
+}
