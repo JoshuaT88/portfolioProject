@@ -1,5 +1,7 @@
+// server/controllers/userController.js
 const User = require('../models/User');
 
+// Register a new user
 const registerUser = async (req, res) => {
   const { uid, email, displayName, username, password } = req.body;
 
@@ -22,4 +24,21 @@ const registerUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser };
+// Fetch user by Firebase UID
+const getUserByUid = async (req, res) => {
+  try {
+    const user = await User.findOne({ uid: req.params.uid });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Fetch user error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+module.exports = {
+  registerUser,
+  getUserByUid // 👈 Add this to exports
+};

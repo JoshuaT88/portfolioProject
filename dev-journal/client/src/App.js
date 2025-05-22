@@ -140,7 +140,18 @@ function App() {
 
   if (loading) return <p style={{ textAlign: 'center', marginTop: '3rem' }}>Loading...</p>;
   if (!user && !isNewUser) return <SignIn onLogin={() => {}} />;
-  if (isNewUser) return <SetupAccount user={auth.currentUser} onComplete={() => setUser(auth.currentUser)} />;
+  if (isNewUser) {
+  return (
+    <SetupAccount
+      user={auth.currentUser}
+      onComplete={() => {
+        setIsNewUser(false);
+        setUser(auth.currentUser); // 👈 this should re-trigger feed
+      }}
+    />
+  );
+}
+
 
   return (
     <>
