@@ -41,6 +41,17 @@ function App() {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+  const interval = setInterval(() => {
+    fetch('https://portfolioproject-1.onrender.com/api/posts')
+      .then(() => console.log("🔁 Backend pinged to stay awake"))
+      .catch((err) => console.error("Ping failed:", err));
+  }, 1000 * 60 * 14); // every 14 minutes
+
+  return () => clearInterval(interval);
+}, []);
+    // Keep the server awake by pinging it every 14 minutes
+
   // 2. Fetch posts once the user is ready
   useEffect(() => {
     if (!user) return;

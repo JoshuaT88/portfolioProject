@@ -1,29 +1,32 @@
-import './setupAccount.css';
 import React, { useState } from 'react';
+import './setupAccount.css';
 import axios from 'axios';
 
 function SetupAccount({ user, onComplete }) {
-  const [form, setForm] = useState({
-    username: '',
-    password: '',
-    notificationPrefs: 'in-app'
-  });
+  const [form, setForm] = useState({ username: '', password: '', notifications: 'in-app' });
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.username || !form.password) return setError("All fields required");
+
+    if (!form.username || !form.password || !form.notifications) {
+      return setError('All fields required');
+    }
 
     try {
       await axios.post('https://portfolioproject-1.onrender.com/api/users/register', {
-        ...form,
         uid: user.uid,
         email: user.email,
-        displayName: user.displayName
+        displayName: user.displayName,
+        username: form.username,
+        password: form.password,
+        notifications: form.notifications
       });
-      onComplete();
+
+      onComplete(); // Proceed to app
     } catch (err) {
-      setError("Failed to save. Username may already exist.");
+      console.error(err);
+      setError("Username may already exist, or server error.");
     }
   };
 
@@ -46,15 +49,15 @@ function SetupAccount({ user, onComplete }) {
 
         <label>Notification Preference:</label>
         <select
-          value={form.notificationPrefs}
-          onChange={(e) => setForm({ ...form, notificationPrefs: e.target.value })}
+          value={form.notifications}
+          onChange={(e) => setForm({ ...form, notifications: e.target.value })}
         >
-          <option value="in-app">In-App</option>
+          <option value="in-app">In-App Only</option>
           <option value="email">Email</option>
-          <option value="push">Push Notification</option>
+          <option value="push">Device Push (coming soon)</option>
         </select>
 
-        <button type="submit">Save</button>
+        <button type="submit">Save & Continue</button>
         {error && <p className="error">{error}</p>}
       </form>
     </div>
