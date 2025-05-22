@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import axios from 'axios';
@@ -6,9 +7,11 @@ import { auth } from './firebase';
 import SignIn from './signIn';
 import SettingsMenu from './settingsMenu';
 import CommentSection from './CommentSection';
+import SetupAccount from './setupAccount';
 
 function App() {
   const [user, setUser] = useState(null);
+  const [isNewUser, setIsNewUser] = useState(false);
   const [posts, setPosts] = useState([]);
   const [form, setForm] = useState({ title: '', body: '' });
   const [editingPostId, setEditingPostId] = useState(null);
@@ -16,8 +19,19 @@ function App() {
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        try {
+          const res = await axios.get(`https://portfolioproject-1.onrender.com/api/users/${currentUser.uid}`);
+          if (!res.data || !res.data.username) {
+            setIsNewUser(true);
+          } else {
+            setUser(currentUser);
+          }
+        } catch {
+          setIsNewUser(true);
+        }
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -58,7 +72,6 @@ function App() {
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this post?')) return;
-
     try {
       await axios.delete(`https://portfolioproject-1.onrender.com/api/posts/${id}`, {
         data: { userId: user.uid }
@@ -89,7 +102,7 @@ function App() {
 
   const handleLike = async (postId) => {
     try {
-      const res = await axios.put(`https://portfolioproject-1.onrender.com/api/likes/${postId}`, {
+      await axios.put(`https://portfolioproject-1.onrender.com/api/likes/${postId}`, {
         userId: user.uid
       });
 
@@ -113,7 +126,8 @@ function App() {
     return text.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
   };
 
-  if (!user) return <SignIn onLogin={() => {}} />;
+  if (!user && !isNewUser) return <SignIn onLogin={() => {}} />;
+  if (isNewUser) return <SetupAccount user={auth.currentUser} onComplete={() => setUser(auth.currentUser)} />;
 
   return (
     <>
