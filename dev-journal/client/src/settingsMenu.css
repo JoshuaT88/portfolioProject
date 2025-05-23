@@ -2,15 +2,13 @@
   position: fixed;
   top: 20px;
   right: 20px;
-
   color: #ffffff;
-    background: #444950;
+  background: #444950;
   font-size: 1.5rem;
   padding: 10px;
   border-radius: 50%;
   cursor: pointer;
   z-index: 2000;
-
 }
 
 .settings-cog:hover {
@@ -26,10 +24,10 @@
   position: fixed;
   top: 0;
   right: -320px;
-  width: 300px;
+  width: 320px;
   height: 100vh;
   background: #fff;
-  box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
   z-index: 1999;
   padding: 20px;
   transition: right 0.3s ease;
@@ -44,6 +42,7 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
 .settings-header {
   display: flex;
   justify-content: space-between;
@@ -60,13 +59,13 @@
 }
 
 .settings-section {
-  margin-top: 20px;
+  margin-top: 24px;
 }
 
 .settings-section h4 {
   margin-bottom: 0.5rem;
-  font-size: 1.1rem;
-  color: #333;
+  font-size: 1.2rem;
+  color: #222;
 }
 
 .settings-section p,
@@ -76,21 +75,49 @@
 }
 
 .profile-pic {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   margin-bottom: 0.5rem;
+  border: 2px solid #ddd;
 }
 
+.settings-section input[type="email"],
+.settings-section input[type="tel"],
+.settings-section select {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+}
+
+.settings-section button,
+.reset-prefs,
 .logout-btn {
-  margin-top: 20px;
-  background-color: #e63946;
-  color: #fff;
+  margin-top: 10px;
   padding: 10px 16px;
   border: none;
   border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
+  background: linear-gradient(135deg, #1d3557, #457b9d);
+  color: white;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.settings-section button:hover,
+.reset-prefs:hover,
+.logout-btn:hover {
+  background: linear-gradient(135deg, #14213d, #1d3557);
+  transform: scale(1.03);
+}
+
+.logout-btn {
   width: 100%;
-  font-weight: 500;
+  background-color: #e63946;
   font-size: 1rem;
+  font-weight: bold;
 }
