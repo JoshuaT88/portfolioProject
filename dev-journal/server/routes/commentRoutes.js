@@ -24,3 +24,5 @@ router.get('/:postId', async (req, res) => {
   const comments = await Comment.find({ postId: req.params.postId }).sort({ date: -1 });
   res.json(comments);
 });
+
+module.exports = router;

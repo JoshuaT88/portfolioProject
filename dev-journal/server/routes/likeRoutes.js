@@ -23,3 +23,5 @@ router.put('/:postId', async (req, res) => {
   await post.save();
   res.json(post);
 });
+
+module.exports = router;

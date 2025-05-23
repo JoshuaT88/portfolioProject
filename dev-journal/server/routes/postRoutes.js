@@ -47,3 +47,4 @@ router.put('/:id', async (req, res) => {
   }
   res.status(403).json({ message: 'Not allowed' });
 });
+module.exports = router;
