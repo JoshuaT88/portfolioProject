@@ -1,6 +1,7 @@
-// server/controllers/userController.js
 const User = require('../models/User');
+const Notification = require('../models/Notification');
 
+// Register a new user
 const registerUser = async (req, res) => {
   const { uid, email, displayName, username, password, notifications } = req.body;
 
@@ -21,46 +22,90 @@ const registerUser = async (req, res) => {
   }
 };
 
+// Fetch user by UID
 const getUserByUID = async (req, res) => {
   const { uid } = req.params;
+
   try {
     const user = await User.findOne({ uid });
     if (!user) return res.status(404).json({ message: "User not found" });
+
     res.status(200).json(user);
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
 };
 
-const updateUserPhone = async (req, res) => {
-  const { uid, phone } = req.body;
-  if (!uid || !phone) return res.status(400).json({ message: "Missing fields" });
+// Update notification prefs, theme
+const updateUserSettings = async (req, res) => {
+  const { uid } = req.params;
+  const { notifications, theme } = req.body;
 
   try {
-    const user = await User.findOneAndUpdate({ uid }, { phone }, { new: true });
-    if (!user) return res.status(404).json({ message: "User not found" });
-    res.json({ message: "Phone updated" });
+    await User.findOneAndUpdate(
+      { uid },
+      { notifications, theme },
+      { new: true }
+    );
+    res.status(200).json({ message: 'Settings updated' });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to update phone" });
+    console.error("Update error:", err);
+    res.status(500).json({ message: 'Failed to update settings' });
   }
 };
 
-const deleteUserAccount = async (req, res) => {
+// Update user phone and email
+const updateUserPhone = async (req, res) => {
+  const { uid, newPhone, newEmail } = req.body;
+
+  if (!uid || (!newPhone && !newEmail)) {
+    return res.status(400).json({ message: 'Missing fields' });
+  }
+
   try {
-    const { uid } = req.params;
-    const deleted = await User.findOneAndDelete({ uid });
-    if (!deleted) return res.status(404).json({ message: "User not found" });
-    res.status(200).json({ message: "User deleted" });
+    const update = {};
+    if (newPhone) update.phone = newPhone;
+    if (newEmail) {
+      update.email = newEmail;
+      console.log(`📧 Email verification sent to: ${newEmail}`);
+      // TODO: Replace this with real email logic
+    }
+
+    await User.findOneAndUpdate({ uid }, update);
+    res.status(200).json({ message: 'Updated info' });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Delete failed" });
+    console.error("Email/Phone update error:", err);
+    res.status(500).json({ message: 'Failed to update' });
+  }
+};
+
+// Confirm password before deleting account
+const deleteUserAccount = async (req, res) => {
+  const { uid } = req.params;
+  const { password } = req.body;
+
+  if (!uid || !password) {
+    return res.status(400).json({ message: 'Missing password confirmation' });
+  }
+
+  try {
+    const user = await User.findOne({ uid });
+    if (!user || user.password !== password) {
+      return res.status(403).json({ message: 'Incorrect password' });
+    }
+
+    await User.deleteOne({ uid });
+    res.status(200).json({ message: 'Account deleted' });
+  } catch (err) {
+    console.error("Delete error:", err);
+    res.status(500).json({ message: 'Delete failed' });
   }
 };
 
 module.exports = {
   registerUser,
   getUserByUID,
+  updateUserSettings,
   updateUserPhone,
   deleteUserAccount
 };
