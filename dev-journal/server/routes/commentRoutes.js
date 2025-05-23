@@ -10,20 +10,29 @@ router.post('/', async (req, res) => {
 
   try {
     const commenter = await User.findOne({ uid: userId });
-    const comment = new Comment({ postId, text, userId, userName: commenter.username });
+    const post = await Post.findById(postId);
+
+    const comment = new Comment({
+      postId,
+      text,
+      userId,
+      userName: commenter?.username || 'Unknown'
+    });
+
     const saved = await comment.save();
 
-    const post = await Post.findById(postId);
     if (post && userId !== post.authorId) {
       await Notification.create({
         userId: post.authorId,
-        message: `${commenter.username} commented on your post.`,
+        message: `${commenter?.username || 'Someone'} commented on your post.`,
         type: 'comment'
       });
+      console.log(`[NOTIF] Sent comment notification to ${post.authorId}`);
     }
 
     res.status(201).json(saved);
   } catch (err) {
+    console.error('[ERROR] Comment failed:', err);
     res.status(500).json({ error: 'Comment failed' });
   }
 });
