@@ -12,7 +12,24 @@ function SettingsMenu({ user }) {
   const [loading, setLoading] = useState(false);
   const [emailInput, setEmailInput] = useState('');
   const [phoneInput, setPhoneInput] = useState('');
+  const [notifPref, setNotifPref] = useState('in-app');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
 
+  // Fetch user settings
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(`https://portfolioproject-1.onrender.com/api/users/${user.uid}`);
+        if (res.data.notifications) setNotifPref(res.data.notifications);
+        if (res.data.phone) setPhoneInput(res.data.phone);
+      } catch (err) {
+        console.error('Failed to load user settings:', err);
+      }
+    };
+    if (user) fetchUser();
+  }, [user]);
+
+  // Theme preference
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme-preference');
     if (savedTheme) {
@@ -65,15 +82,30 @@ function SettingsMenu({ user }) {
   };
 
   const handleDeleteAccount = async () => {
+    if (!passwordConfirm) return alert("Please confirm your password.");
     const confirm = window.confirm("Are you sure? This will permanently delete your account.");
     if (!confirm) return;
     try {
-      await axios.delete(`https://portfolioproject-1.onrender.com/api/users/delete/${user.uid}`);
+      await axios.delete(`https://portfolioproject-1.onrender.com/api/users/delete/${user.uid}`, {
+        data: { password: passwordConfirm }
+      });
       await auth.currentUser.delete();
       alert('Account deleted.');
     } catch (err) {
       console.error(err);
-      alert('Delete failed.');
+      alert('Delete failed. Ensure password is correct.');
+    }
+  };
+
+  const handleUpdateNotifications = async () => {
+    try {
+      await axios.put(`https://portfolioproject-1.onrender.com/api/users/${user.uid}/settings`, {
+        notifications: notifPref
+      });
+      alert('Preferences updated.');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to save preferences.');
     }
   };
 
@@ -82,6 +114,7 @@ function SettingsMenu({ user }) {
       <div
         className={`settings-cog ${open ? 'open' : ''}`}
         onClick={handleCogClick}
+        style={{ top: '20px', right: '20px', fontSize: '2rem' }}
       >
         <i className="fas fa-cog"></i>
       </div>
@@ -121,6 +154,12 @@ function SettingsMenu({ user }) {
             />
             <button className="settings-btn" onClick={handleUpdatePhone}>Update Phone</button>
 
+            <input
+              type="password"
+              placeholder="Confirm Password to Delete"
+              value={passwordConfirm}
+              onChange={(e) => setPasswordConfirm(e.target.value)}
+            />
             <button className="settings-btn danger" onClick={handleDeleteAccount}>
               Deactivate/Delete Account
             </button>
@@ -139,13 +178,17 @@ function SettingsMenu({ user }) {
 
             <label>
               Notification Preference:
-              <select>
-                <option>In-App</option>
-                <option>Email</option>
-                <option>Push</option>
-                <option>None</option>
+              <select value={notifPref} onChange={(e) => setNotifPref(e.target.value)}>
+                <option value="in-app">In-App</option>
+                <option value="email">Email</option>
+                <option value="push">Push</option>
+                <option value="none">None</option>
               </select>
             </label>
+
+            <button className="settings-btn" onClick={handleUpdateNotifications}>
+              Save Preferences
+            </button>
 
             <button
               className="reset-prefs"
@@ -154,7 +197,7 @@ function SettingsMenu({ user }) {
                 localStorage.removeItem('theme-preference');
               }}
             >
-              Reset to default
+              Reset Theme to Default
             </button>
           </div>
 

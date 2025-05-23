@@ -84,21 +84,26 @@ const deleteUserAccount = async (req, res) => {
   const { uid } = req.params;
   const { password } = req.body;
 
-  if (!uid || !password) {
-    return res.status(400).json({ message: 'Missing password confirmation' });
-  }
-
   try {
     const user = await User.findOne({ uid });
-    if (!user || user.password !== password) {
-      return res.status(403).json({ message: 'Incorrect password' });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (user.password !== password) {
+      return res.status(401).json({ message: "Incorrect password" });
     }
 
+    // Delete user account
     await User.deleteOne({ uid });
-    res.status(200).json({ message: 'Account deleted' });
+
+    // Optional: delete user's posts, comments, etc.
+     await Post.deleteMany({ authorId: uid });
+     await Comment.deleteMany({ userId: uid });
+     await Notification.deleteMany({ userId: uid });
+
+    res.status(200).json({ message: "Account deleted" });
   } catch (err) {
-    console.error("Delete error:", err);
-    res.status(500).json({ message: 'Delete failed' });
+    console.error("Delete error:", err.message);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
