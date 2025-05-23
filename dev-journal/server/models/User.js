@@ -6,11 +6,22 @@ const userSchema = new mongoose.Schema({
   displayName: String,
   username: { type: String, unique: true },
   password: String,
-  notifications: {
-    type: String,
-    enum: ['in-app', 'email', 'push'],
-    default: 'in-app',
-  },
+  preferences: {
+    notifications: {
+      enabled: { type: Boolean, default: true },
+      types: {
+        inApp: { type: Boolean, default: true },
+        email: { type: Boolean, default: false },
+        push: { type: Boolean, default: false }
+      },
+      events: {
+        like: { type: Boolean, default: true },
+        comment: { type: Boolean, default: true },
+        share: { type: Boolean, default: true },
+        mention: { type: Boolean, default: true }
+      }
+    }
+  }
 });
 
 module.exports = mongoose.model('User', userSchema);

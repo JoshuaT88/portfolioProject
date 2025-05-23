@@ -3,7 +3,7 @@ const User = require('../models/User');
 const registerUser = async (req, res) => {
   const { uid, email, displayName, username, password, notifications } = req.body;
 
-  if (!uid || !username || !password || !notifications) {
+  if (!uid || !username || !password) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
@@ -26,11 +26,23 @@ const getUserByUID = async (req, res) => {
   try {
     const user = await User.findOne({ uid });
     if (!user) return res.status(404).json({ message: "User not found" });
-
     res.status(200).json(user);
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
 };
 
-module.exports = { registerUser, getUserByUID };
+const updateUserSettings = async (req, res) => {
+  const { uid } = req.params;
+  const updates = req.body;
+
+  try {
+    const user = await User.findOneAndUpdate({ uid }, updates, { new: true });
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ message: "Error updating user" });
+  }
+};
+
+module.exports = { registerUser, getUserByUID, updateUserSettings };

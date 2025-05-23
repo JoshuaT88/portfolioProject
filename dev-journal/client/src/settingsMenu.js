@@ -1,42 +1,39 @@
-// src/SettingsMenu.js
 import React, { useState, useEffect } from 'react';
 import './settingsMenu.css';
 import { signOut } from 'firebase/auth';
 import { auth } from './firebase';
+import axios from 'axios';
 
 function SettingsMenu({ user }) {
-  const [open, setOpen] = useState(false);           // Toggle settings panel
-  const [showPrefs, setShowPrefs] = useState(false); // Toggle Preferences submenu
-  const [theme, setTheme] = useState('dark');         // Theme state
+  const [open, setOpen] = useState(false);
+  const [section, setSection] = useState('profile');
+  const [theme, setTheme] = useState('dark');
+  const [notifications, setNotifications] = useState('in-app');
 
-  // Load saved preference on mount
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme-preference');
-    if (savedTheme) {
-      setTheme(savedTheme);
-      document.body.setAttribute('data-theme', savedTheme);
-    } else {
-      document.body.setAttribute('data-theme', 'dark');
-    }
-  }, []);
+    axios.get(`https://portfolioproject-1.onrender.com/api/users/${user.uid}`)
+      .then(res => {
+        setTheme(res.data.theme || 'dark');
+        setNotifications(res.data.notifications || 'in-app');
+      });
+  }, [user]);
 
-  // Update body attribute and store theme
   useEffect(() => {
     document.body.setAttribute('data-theme', theme);
     localStorage.setItem('theme-preference', theme);
   }, [theme]);
 
-  const handleLogout = async () => {
-    await signOut(auth);
-    setOpen(false);
+  const handleUpdateSettings = async () => {
+    await axios.put(`https://portfolioproject-1.onrender.com/api/users/${user.uid}/settings`, {
+      theme,
+      notifications
+    });
+    alert('Preferences updated!');
   };
 
   return (
     <>
-      <div
-        className={`settings-cog ${open ? 'open' : ''}`}
-        onClick={() => setOpen(!open)}
-      >
+      <div className={`settings-cog ${open ? 'open' : ''}`} onClick={() => setOpen(!open)}>
         <i className="fas fa-cog"></i>
       </div>
 
@@ -46,60 +43,61 @@ function SettingsMenu({ user }) {
           <button onClick={() => setOpen(false)}>×</button>
         </div>
 
-        <div className="settings-section">
-          <h4>Profile</h4>
-          {user?.photoURL && <img src={user.photoURL} alt="User" className="profile-pic" />}
-          <p>{user?.displayName || user?.email}</p>
+        <div className="settings-tabs">
+          <button onClick={() => setSection('profile')}>Profile</button>
+          <button onClick={() => setSection('preferences')}>Account Preferences</button>
+          <button onClick={() => setSection('about')}>About App</button>
         </div>
 
         <div className="settings-section">
-          <h4>Preferences</h4>
-          <button onClick={() => setShowPrefs(!showPrefs)}>Customize</button>
+          {section === 'profile' && (
+            <>
+              <h4>Manage Profile</h4>
+              <p>{user.displayName}</p>
+              <p>{user.email}</p>
+              <button disabled>Change Email (Coming soon)</button>
+              <button disabled>Change Phone (Coming soon)</button>
+              <button className="danger" disabled>Deactivate/Delete Account</button>
+            </>
+          )}
 
-          {showPrefs && (
-            <div className="preferences-menu">
-              <label>
-                Theme:
-                <select value={theme} onChange={(e) => setTheme(e.target.value)}>
-                  <option value="dark">Dark</option>
-                  <option value="light">Light</option>
-                  <option value="system">System</option>
-                </select>
-              </label>
+          {section === 'preferences' && (
+            <>
+              <h4>Theme</h4>
+              <select value={theme} onChange={e => setTheme(e.target.value)}>
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+              </select>
 
-              <label>
-                Notifications:
-                <input type="checkbox" disabled /> Enable @mention alerts (coming soon)
-              </label>
+              <h4>Notification Preference</h4>
+              <select value={notifications} onChange={e => setNotifications(e.target.value)}>
+                <option value="in-app">In-App</option>
+                <option value="email">Email</option>
+                <option value="push">Push Notifications</option>
+                <option value="none">None</option>
+              </select>
 
-              <button
-                className="reset-prefs"
-                onClick={() => {
-                  setTheme('dark');
-                  localStorage.removeItem('theme-preference');
-                }}
-              >
-                Reset to default
-              </button>
-            </div>
+              <button onClick={handleUpdateSettings}>Save Preferences</button>
+            </>
+          )}
+
+          {section === 'about' && (
+            <>
+              <h4>About Dev Journal</h4>
+              <p>
+                Dev Journal is a collaborative platform built by <strong>Joshua Tiller</strong> for developers to post ideas, collaborate, and learn.
+              </p>
+              <p><strong>Upcoming:</strong> @mentions, real-time chat, mobile app</p>
+              <p>Contact support: <a href="mailto:jtctechsoft@gmail.com">jtctechsoft@gmail.com</a></p>
+            </>
           )}
         </div>
 
-        <div className="settings-section">
-          <h4>Notifications</h4>
-          <p>Coming soon: choose email/SMS alerts for new posts.</p>
-        </div>
-
-        <div className="settings-section">
-          <h4>About Dev Journal</h4>
-          <p>
-            Built by <strong>Joshua Tiller</strong> using React, Node, and Firebase.
-          </p>
-          <p>Support: <a href="mailto:jtctechsoft@gmail.com">jtctechsoft@gmail.com</a></p>
-        </div>
-
         <div className="settings-footer">
-          <button className="logout-btn" onClick={handleLogout}>Log Out</button>
+          <button className="logout-btn" onClick={async () => {
+            await signOut(auth);
+            setOpen(false);
+          }}>Log Out</button>
         </div>
       </div>
     </>
