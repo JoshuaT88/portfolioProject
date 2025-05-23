@@ -7,34 +7,33 @@ import axios from 'axios';
 
 function SettingsMenu({ user }) {
   const [open, setOpen] = useState(false);
-  const [showPrefs, setShowPrefs] = useState(false);
-  const [theme, setTheme] = useState('dark');
   const [loading, setLoading] = useState(false);
+
   const [emailInput, setEmailInput] = useState('');
   const [phoneInput, setPhoneInput] = useState('');
-  const [notifPref, setNotifPref] = useState('in-app');
   const [passwordConfirm, setPasswordConfirm] = useState('');
 
-  // Fetch user settings
+  const [theme, setTheme] = useState('dark');
+  const [notifPref, setNotifPref] = useState('in-app');
+
+  const [savedMessage, setSavedMessage] = useState('');
+
+  // Load user data
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await axios.get(`https://portfolioproject-1.onrender.com/api/users/${user.uid}`);
+    if (!user) return;
+    axios.get(`https://portfolioproject-1.onrender.com/api/users/${user.uid}`)
+      .then(res => {
         if (res.data.notifications) setNotifPref(res.data.notifications);
         if (res.data.phone) setPhoneInput(res.data.phone);
-      } catch (err) {
-        console.error('Failed to load user settings:', err);
-      }
-    };
-    if (user) fetchUser();
+      })
+      .catch(err => console.error('User settings fetch failed', err));
   }, [user]);
 
-  // Theme preference
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme-preference');
-    if (savedTheme) {
-      setTheme(savedTheme);
-      document.body.setAttribute('data-theme', savedTheme);
+    const stored = localStorage.getItem('theme-preference');
+    if (stored) {
+      setTheme(stored);
+      document.body.setAttribute('data-theme', stored);
     }
   }, []);
 
@@ -51,16 +50,21 @@ function SettingsMenu({ user }) {
     }, 1000);
   };
 
+  const showSaved = () => {
+    setSavedMessage("✔ Changes Saved");
+    setTimeout(() => setSavedMessage(''), 2000);
+  };
+
   const handleLogout = async () => {
     await signOut(auth);
     setOpen(false);
   };
 
   const handleChangeEmail = async () => {
-    if (!emailInput) return alert('Enter a new email.');
+    if (!emailInput) return alert('Enter new email');
     try {
       await updateEmail(auth.currentUser, emailInput);
-      alert('Email updated!');
+      showSaved();
     } catch (err) {
       console.error(err);
       alert('Email update failed.');
@@ -68,22 +72,33 @@ function SettingsMenu({ user }) {
   };
 
   const handleUpdatePhone = async () => {
-    if (!phoneInput) return alert('Enter a phone number.');
     try {
       await axios.put(`https://portfolioproject-1.onrender.com/api/users/update-phone`, {
         uid: user.uid,
-        phone: phoneInput,
+        phone: phoneInput
       });
-      alert('Phone updated.');
+      showSaved();
     } catch (err) {
       console.error(err);
-      alert('Phone update failed.');
+      alert('Phone update failed');
+    }
+  };
+
+  const handleUpdateNotifications = async () => {
+    try {
+      await axios.put(`https://portfolioproject-1.onrender.com/api/users/${user.uid}/settings`, {
+        notifications: notifPref
+      });
+      showSaved();
+    } catch (err) {
+      console.error(err);
+      alert('Notification preference update failed.');
     }
   };
 
   const handleDeleteAccount = async () => {
-    if (!passwordConfirm) return alert("Please confirm your password.");
-    const confirm = window.confirm("Are you sure? This will permanently delete your account.");
+    if (!passwordConfirm) return alert("Please confirm password");
+    const confirm = window.confirm("Are you sure? This deletes your account permanently.");
     if (!confirm) return;
     try {
       await axios.delete(`https://portfolioproject-1.onrender.com/api/users/delete/${user.uid}`, {
@@ -93,19 +108,7 @@ function SettingsMenu({ user }) {
       alert('Account deleted.');
     } catch (err) {
       console.error(err);
-      alert('Delete failed. Ensure password is correct.');
-    }
-  };
-
-  const handleUpdateNotifications = async () => {
-    try {
-      await axios.put(`https://portfolioproject-1.onrender.com/api/users/${user.uid}/settings`, {
-        notifications: notifPref
-      });
-      alert('Preferences updated.');
-    } catch (err) {
-      console.error(err);
-      alert('Failed to save preferences.');
+      alert('Delete failed. Incorrect password?');
     }
   };
 
@@ -144,7 +147,7 @@ function SettingsMenu({ user }) {
               value={emailInput}
               onChange={(e) => setEmailInput(e.target.value)}
             />
-            <button className="settings-btn" onClick={handleChangeEmail}>Change Email</button>
+            <button className="settings-btn" onClick={handleChangeEmail}>Save Email</button>
 
             <input
               type="text"
@@ -152,11 +155,11 @@ function SettingsMenu({ user }) {
               value={phoneInput}
               onChange={(e) => setPhoneInput(e.target.value)}
             />
-            <button className="settings-btn" onClick={handleUpdatePhone}>Update Phone</button>
+            <button className="settings-btn" onClick={handleUpdatePhone}>Save Phone</button>
 
             <input
               type="password"
-              placeholder="Confirm Password to Delete"
+              placeholder="Password (for delete)"
               value={passwordConfirm}
               onChange={(e) => setPasswordConfirm(e.target.value)}
             />
@@ -177,7 +180,7 @@ function SettingsMenu({ user }) {
             </label>
 
             <label>
-              Notification Preference:
+              Notifications:
               <select value={notifPref} onChange={(e) => setNotifPref(e.target.value)}>
                 <option value="in-app">In-App</option>
                 <option value="email">Email</option>
@@ -185,7 +188,6 @@ function SettingsMenu({ user }) {
                 <option value="none">None</option>
               </select>
             </label>
-
             <button className="settings-btn" onClick={handleUpdateNotifications}>
               Save Preferences
             </button>
@@ -203,16 +205,16 @@ function SettingsMenu({ user }) {
 
           <div className="settings-section">
             <h4>About Dev Journal</h4>
-            <p>
-              Dev Journal is a Firebase-powered writing app built with React & Node.
-              Future versions will include teams, collaboration, and AI.
-            </p>
+            <p>Dev Journal is a collaborative app powered by Firebase & Node.</p>
+            <p>More features coming soon: Teams, AI code helpers, cross-platform sharing.</p>
             <p>Support: <a href="mailto:jtctechsoft@gmail.com">jtctechsoft@gmail.com</a></p>
           </div>
 
           <div className="settings-footer">
             <button className="logout-btn" onClick={handleLogout}>Log Out</button>
           </div>
+
+          {savedMessage && <div className="settings-toast">{savedMessage}</div>}
         </div>
       )}
     </>
