@@ -1,0 +1,16 @@
+.messages-screen {
+  padding: 1rem;
+}
+
+.message-bubble {
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  background: #e6f0ff;
+  border-radius: 10px;
+  max-width: 70%;
+}
+
+.message-sender {
+  font-size: 0.85rem;
+  font-weight: bold;
+}

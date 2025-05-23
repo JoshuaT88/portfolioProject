@@ -1,0 +1,25 @@
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-color, #f9f9f9);
+}
+
+.main-layout .header {
+  padding: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+}
+
+.main-layout .content {
+  flex: 1;
+  padding-bottom: 4rem; /* Leave room for bottom nav */
+}
+
+@media (max-width: 600px) {
+  .main-layout .header {
+    text-align: center;
+  }
+}

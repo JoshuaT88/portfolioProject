@@ -1,0 +1,29 @@
+.profile-page {
+  padding: 1rem;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profile-header img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+}
+
+.profile-info h3 {
+  margin: 0;
+}
+
+.profile-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.profile-stats span {
+  font-weight: bold;
+}

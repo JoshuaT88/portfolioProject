@@ -1,0 +1,40 @@
+.create-post-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.create-post-content {
+  background: #fff;
+  width: 90%;
+  max-width: 400px;
+  padding: 1.5rem;
+  border-radius: 10px;
+}
+
+.create-post-content h2 {
+  margin-bottom: 1rem;
+}
+
+.create-post-content input,
+.create-post-content textarea {
+  width: 100%;
+  padding: 0.6rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.create-post-content button {
+  width: 100%;
+  padding: 0.6rem;
+  background: #0077ff;
+  border: none;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 6px;
+}
