@@ -1,9 +1,10 @@
+// server/controllers/userController.js
 const User = require('../models/User');
 
 const registerUser = async (req, res) => {
   const { uid, email, displayName, username, password, notifications } = req.body;
 
-  if (!uid || !username || !password) {
+  if (!uid || !username || !password || !notifications) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
@@ -22,7 +23,6 @@ const registerUser = async (req, res) => {
 
 const getUserByUID = async (req, res) => {
   const { uid } = req.params;
-
   try {
     const user = await User.findOne({ uid });
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -32,17 +32,35 @@ const getUserByUID = async (req, res) => {
   }
 };
 
-const updateUserSettings = async (req, res) => {
-  const { uid } = req.params;
-  const updates = req.body;
+const updateUserPhone = async (req, res) => {
+  const { uid, phone } = req.body;
+  if (!uid || !phone) return res.status(400).json({ message: "Missing fields" });
 
   try {
-    const user = await User.findOneAndUpdate({ uid }, updates, { new: true });
+    const user = await User.findOneAndUpdate({ uid }, { phone }, { new: true });
     if (!user) return res.status(404).json({ message: "User not found" });
-    res.status(200).json(user);
+    res.json({ message: "Phone updated" });
   } catch (err) {
-    res.status(500).json({ message: "Error updating user" });
+    console.error(err);
+    res.status(500).json({ message: "Failed to update phone" });
   }
 };
 
-module.exports = { registerUser, getUserByUID, updateUserSettings };
+const deleteUserAccount = async (req, res) => {
+  try {
+    const { uid } = req.params;
+    const deleted = await User.findOneAndDelete({ uid });
+    if (!deleted) return res.status(404).json({ message: "User not found" });
+    res.status(200).json({ message: "User deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Delete failed" });
+  }
+};
+
+module.exports = {
+  registerUser,
+  getUserByUID,
+  updateUserPhone,
+  deleteUserAccount
+};

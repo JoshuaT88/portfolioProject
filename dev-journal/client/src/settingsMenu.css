@@ -59,3 +59,20 @@
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
+
+.settings-section input[type="text"],
+.settings-section input[type="email"] {
+  width: 100%;
+  padding: 8px;
+  margin: 6px 0 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+}
+
+.settings-section select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  margin-top: 0.25rem;
+}
