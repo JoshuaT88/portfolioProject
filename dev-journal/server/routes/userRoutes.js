@@ -4,45 +4,56 @@ const {
   registerUser,
   getUserByUID,
   updateUserSettings,
-  updateUserPhone,
-  deleteUserAccount
+  deleteUserAccount,
+  updateNotificationPrefs,
+  updateUserPhone
 } = require('../controllers/userController');
+
 const Notification = require('../models/Notification');
 const User = require('../models/User');
 
-// Register a new user
+// 1. Register new user after Google login
 router.post('/register', registerUser);
 
-// Get user by UID
+// 2. Get user details by Firebase UID
 router.get('/:uid', getUserByUID);
 
-// Update notification/theme settings
+// 3. Update general settings (theme, notifications)
 router.put('/:uid/settings', updateUserSettings);
 
-// Update user phone number
+// 4. Update notification preferences only
+router.put('/:uid/notifications', updateNotificationPrefs);
+
+// 5. Update email and/or phone
 router.put('/update-phone', updateUserPhone);
 
-// Delete/deactivate account
+// 6. Delete user account with password confirmation
 router.delete('/delete/:uid', deleteUserAccount);
 
-// Follow logic + notify followee
+// 7. Follow user (sends notification)
 router.post('/follow', async (req, res) => {
   const { followerId, followeeId } = req.body;
 
-  const follower = await User.findOne({ uid: followerId });
-  const followee = await User.findOne({ uid: followeeId });
+  try {
+    const follower = await User.findOne({ uid: followerId });
+    const followee = await User.findOne({ uid: followeeId });
 
-  if (!follower || !followee) {
-    return res.status(404).json({ error: 'Invalid users' });
+    if (!follower || !followee) {
+      return res.status(404).json({ error: 'Invalid user IDs' });
+    }
+
+    // Notify the followed user
+    await Notification.create({
+      userId: followeeId,
+      type: 'follow',
+      message: `${follower.username} followed you.`
+    });
+
+    res.status(200).json({ message: 'Followed and notified' });
+  } catch (err) {
+    console.error("Follow error:", err);
+    res.status(500).json({ message: "Failed to follow user" });
   }
-
-  await Notification.create({
-    userId: followeeId,
-    type: 'follow',
-    message: `${follower.username} followed you.`
-  });
-
-  res.status(200).json({ message: 'Followed and notified' });
 });
 
 module.exports = router;

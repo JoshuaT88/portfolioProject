@@ -1,49 +1,26 @@
-const express = require('express');
-const router = express.Router();
+const router = require('express').Router();
 const Comment = require('../models/Comment');
 const Notification = require('../models/Notification');
 const Post = require('../models/Post');
-const User = require('../models/User');
 
 router.post('/', async (req, res) => {
-  const { postId, text, userId } = req.body;
+  const { postId, text, userId, userName } = req.body;
+  const comment = new Comment({ postId, text, userId, userName });
+  const saved = await comment.save();
 
-  try {
-    const commenter = await User.findOne({ uid: userId });
-    const post = await Post.findById(postId);
-
-    const comment = new Comment({
-      postId,
-      text,
-      userId,
-      userName: commenter?.username || 'Unknown'
+  const post = await Post.findById(postId);
+  if (post && userId !== post.authorId) {
+    await Notification.create({
+      userId: post.authorId,
+      type: 'comment',
+      message: `${userName} commented on your post.`,
     });
-
-    const saved = await comment.save();
-
-    if (post && userId !== post.authorId) {
-      await Notification.create({
-        userId: post.authorId,
-        message: `${commenter?.username || 'Someone'} commented on your post.`,
-        type: 'comment'
-      });
-      console.log(`[NOTIF] Sent comment notification to ${post.authorId}`);
-    }
-
-    res.status(201).json(saved);
-  } catch (err) {
-    console.error('[ERROR] Comment failed:', err);
-    res.status(500).json({ error: 'Comment failed' });
   }
+
+  res.status(201).json(saved);
 });
 
 router.get('/:postId', async (req, res) => {
-  try {
-    const comments = await Comment.find({ postId: req.params.postId }).sort({ date: -1 });
-    res.json(comments);
-  } catch {
-    res.status(400).json({ error: 'Bad request' });
-  }
+  const comments = await Comment.find({ postId: req.params.postId }).sort({ date: -1 });
+  res.json(comments);
 });
-
-module.exports = router;

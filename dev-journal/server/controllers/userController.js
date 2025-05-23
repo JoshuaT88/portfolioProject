@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const Notification = require('../models/Notification');
+const Post = require('../models/Post');
+const Comment = require('../models/Comment');
 
 // Register a new user
 const registerUser = async (req, res) => {
@@ -22,7 +24,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-// Fetch user by UID
+// Fetch user by Firebase UID
 const getUserByUID = async (req, res) => {
   const { uid } = req.params;
 
@@ -36,7 +38,7 @@ const getUserByUID = async (req, res) => {
   }
 };
 
-// Update notification prefs, theme
+// Update theme and global notification preferences
 const updateUserSettings = async (req, res) => {
   const { uid } = req.params;
   const { notifications, theme } = req.body;
@@ -54,7 +56,7 @@ const updateUserSettings = async (req, res) => {
   }
 };
 
-// Update user phone and email
+// Update phone number or email
 const updateUserPhone = async (req, res) => {
   const { uid, newPhone, newEmail } = req.body;
 
@@ -67,19 +69,37 @@ const updateUserPhone = async (req, res) => {
     if (newPhone) update.phone = newPhone;
     if (newEmail) {
       update.email = newEmail;
-      console.log(`📧 Email verification sent to: ${newEmail}`);
-      // TODO: Replace this with real email logic
+      console.log(`📧 Simulated: Email verification sent to ${newEmail}`);
+      // TODO: real email confirmation logic via nodemailer or Firebase
     }
 
     await User.findOneAndUpdate({ uid }, update);
-    res.status(200).json({ message: 'Updated info' });
+    res.status(200).json({ message: 'User contact info updated' });
   } catch (err) {
     console.error("Email/Phone update error:", err);
     res.status(500).json({ message: 'Failed to update' });
   }
 };
 
-// Confirm password before deleting account
+// Update notification preferences only
+const updateNotificationPrefs = async (req, res) => {
+  const { uid } = req.params;
+  const { notifications } = req.body;
+
+  if (!uid || !notifications) {
+    return res.status(400).json({ message: 'Missing notification settings' });
+  }
+
+  try {
+    await User.findOneAndUpdate({ uid }, { notifications });
+    res.status(200).json({ message: 'Notification preferences updated' });
+  } catch (err) {
+    console.error("Notification pref error:", err);
+    res.status(500).json({ message: 'Update failed' });
+  }
+};
+
+// Confirm password before deleting
 const deleteUserAccount = async (req, res) => {
   const { uid } = req.params;
   const { password } = req.body;
@@ -92,18 +112,15 @@ const deleteUserAccount = async (req, res) => {
       return res.status(401).json({ message: "Incorrect password" });
     }
 
-    // Delete user account
     await User.deleteOne({ uid });
+    await Post.deleteMany({ authorId: uid });
+    await Comment.deleteMany({ userId: uid });
+    await Notification.deleteMany({ userId: uid });
 
-    // Optional: delete user's posts, comments, etc.
-     await Post.deleteMany({ authorId: uid });
-     await Comment.deleteMany({ userId: uid });
-     await Notification.deleteMany({ userId: uid });
-
-    res.status(200).json({ message: "Account deleted" });
+    res.status(200).json({ message: "Account and data deleted" });
   } catch (err) {
-    console.error("Delete error:", err.message);
-    res.status(500).json({ message: "Server error" });
+    console.error("Delete error:", err);
+    res.status(500).json({ message: "Account deletion failed" });
   }
 };
 
@@ -111,6 +128,7 @@ module.exports = {
   registerUser,
   getUserByUID,
   updateUserSettings,
+  updateNotificationPrefs,
   updateUserPhone,
   deleteUserAccount
 };
