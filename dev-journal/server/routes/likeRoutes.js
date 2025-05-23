@@ -1,11 +1,11 @@
-// routes/likeRoutes.js
 const express = require('express');
 const router = express.Router();
 const Post = require('../models/Post');
 const Notification = require('../models/Notification');
+const User = require('../models/User');
 
 router.put('/:postId', async (req, res) => {
-  const { userId, userName } = req.body;
+  const { userId } = req.body;
 
   try {
     const post = await Post.findById(req.params.postId);
@@ -17,9 +17,10 @@ router.put('/:postId', async (req, res) => {
     } else {
       post.likes.push(userId);
       if (userId !== post.authorId) {
+        const liker = await User.findOne({ uid: userId });
         await Notification.create({
           userId: post.authorId,
-          message: `${userName} liked your post.`,
+          message: `${liker.username || 'Someone'} liked your post.`,
           type: 'like'
         });
       }
